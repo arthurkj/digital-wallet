@@ -1,8 +1,8 @@
 spring:
   application:
-    name: template
+    name: digital-wallet
   datasource:
-    url: jdbc:postgresql://localhost:5432/db
+    url: jdbc:postgresql://localhost:5432/digital-wallet
     username: user
     password: password
   jpa:
