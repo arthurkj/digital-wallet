@@ -1,15 +1,19 @@
 package br.com.akj.digital.wallet.domain;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 
-import br.com.akj.digital.wallet.domain.enumeration.UserType;
-import jakarta.persistence.Column;
+import org.hibernate.annotations.CreationTimestamp;
+
+import br.com.akj.digital.wallet.domain.enumeration.TransactionStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -18,34 +22,31 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Entity(name = "User")
-@Table(name = "users")
+@Entity(name = "Transaction")
+@Table(name = "transactions")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity {
+public class TransactionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
-    private String name;
-
-    @NotNull
-    @Column(unique = true)
-    private String personRegistrationCode;
-
-    @NotNull
-    @Column(unique = true)
-    private String email;
-
-    @NotNull
-    private String password;
+    private BigDecimal amount;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private UserType type;
+    private TransactionStatus status;
 
-    private BigDecimal balance;
+    @ManyToOne
+    private UserEntity sender;
+
+    @ManyToOne
+    private UserEntity receiver;
+
+    @CreationTimestamp
+    private OffsetDateTime date;
+
 }

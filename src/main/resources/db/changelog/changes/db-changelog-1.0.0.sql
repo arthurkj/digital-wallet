@@ -10,3 +10,13 @@ password VARCHAR(50) NOT NULL,
 type VARCHAR(50) NOT NULL,
 balance NUMERIC DEFAULT 0
 );
+
+--changeset arthur.juchem:2
+CREATE TABLE transactions (
+id SERIAL PRIMARY KEY,
+status VARCHAR(50) NOT NULL,
+amount NUMERIC NOT NULL,
+sender_id INT REFERENCES users(id) NOT NULL,
+receiver_id INT REFERENCES users(id) NOT NULL,
+date TIMESTAMP NOT NULL
+);

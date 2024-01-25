@@ -1,6 +1,6 @@
 package br.com.akj.digital.wallet.builder.user;
 
-import br.com.akj.digital.wallet.dto.UserResponse;
+import br.com.akj.digital.wallet.dto.user.UserResponse;
 import br.com.akj.digital.wallet.domain.UserEntity;
 
 public class UserResponseBuilder {

@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import br.com.akj.digital.wallet.errors.Error;
 import br.com.akj.digital.wallet.errors.dto.ErrorMessage;
 import lombok.Getter;
 

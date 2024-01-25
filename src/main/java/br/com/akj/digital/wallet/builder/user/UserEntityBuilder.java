@@ -2,7 +2,7 @@ package br.com.akj.digital.wallet.builder.user;
 
 import java.math.BigDecimal;
 
-import br.com.akj.digital.wallet.dto.UserCreationRequest;
+import br.com.akj.digital.wallet.dto.user.UserCreationRequest;
 import br.com.akj.digital.wallet.domain.UserEntity;
 
 public class UserEntityBuilder {

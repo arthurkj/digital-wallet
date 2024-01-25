@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.akj.digital.wallet.dto.UserCreationRequest;
-import br.com.akj.digital.wallet.dto.UserResponse;
+import br.com.akj.digital.wallet.dto.user.UserCreationRequest;
+import br.com.akj.digital.wallet.dto.user.UserResponse;
 import br.com.akj.digital.wallet.service.user.UserCreationService;
 import lombok.RequiredArgsConstructor;
 

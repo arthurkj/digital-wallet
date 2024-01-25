@@ -3,7 +3,7 @@ package br.com.akj.digital.wallet.validator.user;
 import static br.com.akj.digital.wallet.errors.Error.NOT_UNIQUE_USER;
 
 import br.com.akj.digital.wallet.domain.enumeration.UserType;
-import br.com.akj.digital.wallet.dto.UserCreationRequest;
+import br.com.akj.digital.wallet.dto.user.UserCreationRequest;
 import br.com.akj.digital.wallet.exception.BusinessErrorException;
 import br.com.akj.digital.wallet.helper.MessageHelper;
 import br.com.akj.digital.wallet.repository.UserRepository;

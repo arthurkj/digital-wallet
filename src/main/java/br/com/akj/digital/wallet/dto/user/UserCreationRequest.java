@@ -1,4 +1,4 @@
-package br.com.akj.digital.wallet.dto;
+package br.com.akj.digital.wallet.dto.user;
 
 import br.com.akj.digital.wallet.domain.enumeration.UserType;
 import jakarta.validation.constraints.NotBlank;

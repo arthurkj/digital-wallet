@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 
 import br.com.akj.digital.wallet.builder.user.UserEntityBuilder;
 import br.com.akj.digital.wallet.builder.user.UserResponseBuilder;
-import br.com.akj.digital.wallet.dto.UserCreationRequest;
-import br.com.akj.digital.wallet.dto.UserResponse;
+import br.com.akj.digital.wallet.dto.user.UserCreationRequest;
+import br.com.akj.digital.wallet.dto.user.UserResponse;
 import br.com.akj.digital.wallet.domain.UserEntity;
 import br.com.akj.digital.wallet.repository.UserRepository;
 import br.com.akj.digital.wallet.validator.user.UserCreationValidator;
@@ -26,7 +26,6 @@ public class UserCreationService {
     public UserResponse create(final UserCreationRequest request) {
         log.info("Creating user {}", request.name());
 
-        // TODO: mudar estratégia
         validate(request);
 
         final UserEntity newUser = userRepository.save(UserEntityBuilder.build(request));
