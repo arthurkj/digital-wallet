@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: template
+  datasource:
+    url: jdbc:postgresql://localhost:5432/db
+    username: user
+    password: password
+  jpa:
+    show-sql: true
+
+logging:
+  level:
+    br.com.akj: DEBUG
+
+### ACTUATOR ###
+# set to always show the details at health check endpoint
+management:
+  endpoint.health.show-details: always
+# set the resources to be exposed
+  endpoints.web.exposure.include: health,info,metrics
+
+### LIQUIBASE ###
+liquibase:
+  enabled: true
+  liquibase-schema: hello-user
