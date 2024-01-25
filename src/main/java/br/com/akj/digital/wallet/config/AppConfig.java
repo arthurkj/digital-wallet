@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
+import br.com.caelum.stella.validation.CNPJValidator;
+import br.com.caelum.stella.validation.CPFValidator;
+
 @Configuration
 public class AppConfig {
 
@@ -19,5 +22,15 @@ public class AppConfig {
         source.setDefaultEncoding("UTF-8");
         source.setDefaultLocale(PT_BR);
         return source;
+    }
+
+    @Bean
+    public CPFValidator stellaCpfValidator() {
+        return new CPFValidator();
+    }
+
+    @Bean
+    CNPJValidator stellaCnpjValidator() {
+        return new CNPJValidator();
     }
 }
