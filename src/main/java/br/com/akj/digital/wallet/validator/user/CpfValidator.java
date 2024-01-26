@@ -20,7 +20,7 @@ public class CpfValidator {
     private final MessageHelper messageHelper;
     private final CPFValidator stellaCpfvalidator;
 
-    public void validar(final String cpf) {
+    public void validate(final String cpf) {
         if (isBlank(cpf) || isFalse(stellaCpfvalidator.invalidMessagesFor(cpf).isEmpty())) {
             throw new BusinessErrorException(INVALID_CPF, messageHelper.get(INVALID_CPF));
         }

@@ -24,6 +24,6 @@ public class StoreOwnerUserCreationValidator extends UserCreationValidator {
 
     @Override
     public void validateCode(final String code) {
-        cnpjValidator.validar(code);
+        cnpjValidator.validate(code);
     }
 }

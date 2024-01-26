@@ -24,6 +24,6 @@ public class CommonUserCreationValidator extends UserCreationValidator {
 
     @Override
     public void validateCode(final String code) {
-        cpfValidator.validar(code);
+        cpfValidator.validate(code);
     }
 }

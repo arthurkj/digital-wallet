@@ -20,7 +20,7 @@ public class CnpjValidator {
     private final MessageHelper messageHelper;
     private final CNPJValidator stellaCnpjValidator;
 
-    public void validar(final String cnpj) {
+    public void validate(final String cnpj) {
         if (isBlank(cnpj) || isFalse(stellaCnpjValidator.invalidMessagesFor(cnpj).isEmpty())) {
             throw new BusinessErrorException(INVALID_CNPJ, messageHelper.get(INVALID_CNPJ));
         }
