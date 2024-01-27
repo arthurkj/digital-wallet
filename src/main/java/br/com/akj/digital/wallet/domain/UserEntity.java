@@ -47,5 +47,6 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private UserType type;
 
+    @Column
     private BigDecimal balance;
 }

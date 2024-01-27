@@ -9,8 +9,9 @@ import static br.com.akj.digital.wallet.errors.ErrorCode.CODE_0006;
 import static br.com.akj.digital.wallet.errors.ErrorCode.CODE_0007;
 import static br.com.akj.digital.wallet.errors.ErrorCode.CODE_0008;
 import static br.com.akj.digital.wallet.errors.ErrorCode.CODE_0009;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static br.com.akj.digital.wallet.errors.ErrorCode.CODE_0010;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import org.springframework.http.HttpStatus;
@@ -24,14 +25,15 @@ import lombok.Getter;
 public enum Error {
 
     INTERNAL_ERROR("internal.error", CODE_0001.getCode(), INTERNAL_SERVER_ERROR),
-    INVALID_PARAMETERS("invalid.parameters", CODE_0002.getCode(), BAD_REQUEST),
+    INVALID_PARAMETERS("invalid.parameters", CODE_0002.getCode(), NOT_ACCEPTABLE),
     USER_NOT_FOUND("user.not.found", CODE_0003.getCode(), NOT_FOUND),
-    INVALID_CPF("invalid.cpf", CODE_0004.getCode(), BAD_REQUEST),
-    INVALID_CNPJ("invalid.cnpj", CODE_0005.getCode(), BAD_REQUEST),
-    NOT_UNIQUE_USER("not.unique.user", CODE_0006.getCode(), BAD_REQUEST),
-    ACTION_NOT_PERMITTED("action.not.permitted", CODE_0007.getCode(), BAD_REQUEST),
-    INSUFFICIENT_BALANCE("insufficient.balance", CODE_0008.getCode(), BAD_REQUEST),
-    CLIENT_NOT_FOUND("client.not.found", CODE_0009.getCode(), BAD_REQUEST);
+    INVALID_CPF("invalid.cpf", CODE_0004.getCode(), NOT_ACCEPTABLE),
+    INVALID_CNPJ("invalid.cnpj", CODE_0005.getCode(), NOT_ACCEPTABLE),
+    NOT_UNIQUE_USER("not.unique.user", CODE_0006.getCode(), NOT_ACCEPTABLE),
+    ACTION_NOT_PERMITTED("action.not.permitted", CODE_0007.getCode(), NOT_ACCEPTABLE),
+    INSUFFICIENT_BALANCE("insufficient.balance", CODE_0008.getCode(), NOT_ACCEPTABLE),
+    CLIENT_NOT_FOUND("client.not.found", CODE_0009.getCode(), NOT_ACCEPTABLE),
+    UNAUTHORIZED_TRANSACTION("unaunthorized.transaction", CODE_0010.getCode(), NOT_ACCEPTABLE);
 
     private final String messageKey;
     private final String code;

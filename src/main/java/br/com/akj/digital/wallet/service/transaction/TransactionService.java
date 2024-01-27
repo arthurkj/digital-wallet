@@ -1,5 +1,6 @@
 package br.com.akj.digital.wallet.service.transaction;
 
+import static br.com.akj.digital.wallet.errors.Error.UNAUTHORIZED_TRANSACTION;
 import static br.com.akj.digital.wallet.integration.authorizer.dto.AuthorizerStatus.UNAUTHORIZED;
 
 import java.math.BigDecimal;
@@ -13,6 +14,8 @@ import br.com.akj.digital.wallet.domain.UserEntity;
 import br.com.akj.digital.wallet.domain.enumeration.TransactionStatus;
 import br.com.akj.digital.wallet.dto.transaction.TransactionRequest;
 import br.com.akj.digital.wallet.dto.transaction.TransactionResponse;
+import br.com.akj.digital.wallet.exception.BusinessErrorException;
+import br.com.akj.digital.wallet.helper.MessageHelper;
 import br.com.akj.digital.wallet.integration.authorizer.dto.AuthorizerStatus;
 import br.com.akj.digital.wallet.repository.TransactionRepository;
 import br.com.akj.digital.wallet.service.notification.NotificationService;
@@ -31,6 +34,7 @@ public class TransactionService {
     private final TransactionValidator transactionValidator;
     private final AuthorizerService authorizerService;
     private final NotificationService notificationService;
+    private final MessageHelper messageHelper;
 
     @Transactional
     public TransactionResponse execute(final TransactionRequest request) {
@@ -50,7 +54,8 @@ public class TransactionService {
             final TransactionEntity transaction = TransactionBuilder.build(request, sender, receiver,
                 TransactionStatus.ERROR);
             transactionRepository.save(transaction);
-            return new TransactionResponse(transaction.getStatus());
+
+            throw new BusinessErrorException(UNAUTHORIZED_TRANSACTION, messageHelper.get(UNAUTHORIZED_TRANSACTION));
         }
 
         sender.setBalance(sender.getBalance().subtract(amount));

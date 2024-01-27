@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
 public abstract class BaseIntegrationTest {
 
     @ServiceConnection
@@ -26,6 +28,7 @@ public abstract class BaseIntegrationTest {
     @BeforeEach
     void beforeEach() {
         if (jdbcTemplate != null) {
+            jdbcTemplate.execute("DELETE FROM transactions");
             jdbcTemplate.execute("DELETE FROM users");
         }
     }

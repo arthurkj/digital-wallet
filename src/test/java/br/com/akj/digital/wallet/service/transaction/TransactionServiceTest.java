@@ -18,7 +18,9 @@ import br.com.akj.digital.wallet.domain.TransactionEntity;
 import br.com.akj.digital.wallet.domain.UserEntity;
 import br.com.akj.digital.wallet.dto.transaction.TransactionRequest;
 import br.com.akj.digital.wallet.dto.transaction.TransactionResponse;
+import br.com.akj.digital.wallet.exception.BusinessErrorException;
 import br.com.akj.digital.wallet.fixture.Fixture;
+import br.com.akj.digital.wallet.helper.MessageHelper;
 import br.com.akj.digital.wallet.integration.authorizer.dto.AuthorizerStatus;
 import br.com.akj.digital.wallet.repository.TransactionRepository;
 import br.com.akj.digital.wallet.service.notification.NotificationService;
@@ -45,6 +47,9 @@ class TransactionServiceTest {
 
     @Mock
     private NotificationService notificationService;
+
+    @Mock
+    private MessageHelper messageHelper;
 
     @Test
     public void execute_with_success() {
@@ -87,10 +92,7 @@ class TransactionServiceTest {
 
         when(authorizerService.authorize(sender.getId(), request.amount())).thenReturn(authorizationStatus);
 
-        final TransactionResponse result = service.execute(request);
-
-        assertNotNull(result);
-        assertEquals(ERROR, result.status());
+        assertThrows(BusinessErrorException.class, () -> service.execute(request));
 
         verify(userService).getById(request.sender());
         verify(transactionValidator).validate(sender, request.receiver(), request.amount());

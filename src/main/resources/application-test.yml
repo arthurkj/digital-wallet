@@ -1,0 +1,12 @@
+integration:
+  api:
+    authorizer:
+      host: http://localhost:1080
+      v3:
+        basePath: /v3
+        authorize: /5794d450-d2e2-4412-8131-73d0293ac1cc
+    notification:
+      host: http://localhost:1081
+      v3:
+        basePath: /v3
+        send: /54dc2cf1-3add-45b5-b5a9-6bf7e7f1f4a6
