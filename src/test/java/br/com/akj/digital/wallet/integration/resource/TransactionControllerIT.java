@@ -39,7 +39,6 @@ import br.com.akj.digital.wallet.integration.authorizer.dto.AuthorizerStatus;
 import br.com.akj.digital.wallet.integration.authorizer.dto.TransactionAuthorizationResponse;
 import br.com.akj.digital.wallet.integration.notification.dto.NotificationResponse;
 import br.com.akj.digital.wallet.repository.UserRepository;
-import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.stella.validation.CPFValidator;
 import feign.Request.HttpMethod;
 
