@@ -10,6 +10,7 @@ import static br.com.akj.digital.wallet.errors.ErrorCode.CODE_0007;
 import static br.com.akj.digital.wallet.errors.ErrorCode.CODE_0008;
 import static br.com.akj.digital.wallet.errors.ErrorCode.CODE_0009;
 import static br.com.akj.digital.wallet.errors.ErrorCode.CODE_0010;
+import static br.com.akj.digital.wallet.errors.ErrorCode.CODE_0011;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -33,7 +34,8 @@ public enum Error {
     ACTION_NOT_PERMITTED("action.not.permitted", CODE_0007.getCode(), NOT_ACCEPTABLE),
     INSUFFICIENT_BALANCE("insufficient.balance", CODE_0008.getCode(), NOT_ACCEPTABLE),
     CLIENT_NOT_FOUND("client.not.found", CODE_0009.getCode(), NOT_ACCEPTABLE),
-    UNAUTHORIZED_TRANSACTION("unaunthorized.transaction", CODE_0010.getCode(), NOT_ACCEPTABLE);
+    UNAUTHORIZED_TRANSACTION("unaunthorized.transaction", CODE_0010.getCode(), NOT_ACCEPTABLE),
+    ERROR_ON_TRANSACTION_NOTIFICATION("error.on.transaction.notification", CODE_0011.getCode(), INTERNAL_SERVER_ERROR);
 
     private final String messageKey;
     private final String code;
