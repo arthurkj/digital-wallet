@@ -54,5 +54,3 @@ Integration tests utilize the [Testcontainers](https://testcontainers.com/) libr
 
 ### Health
 This project uses Spring Boot Actuator to provide information about the API's health. Access the `/actuator/health` endpoint for this information. Spring Boot Actuator offers various endpoints for monitoring and checking the API's health. Consult the official Actuator [documentation](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#actuator.metrics) for details.
-
-Feel free to explore, contribute and adapt this template to accelerate your API development process. Happy coding!
