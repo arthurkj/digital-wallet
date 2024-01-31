@@ -23,6 +23,6 @@ jobs:
           cache-dependency-path: 'sub-project/pom.xml'
 
       - name: Run tests with Maven
-        run: mvn -B test
+        run: mvn test
       - name: Run integration tests with Maven
-        run: mvn -B integration-test
+        run: mvn -Dskip.ut=true verify
