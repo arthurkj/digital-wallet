@@ -17,6 +17,7 @@ import br.com.akj.digital.wallet.dto.transaction.TransactionResponse;
 import br.com.akj.digital.wallet.exception.BusinessErrorException;
 import br.com.akj.digital.wallet.helper.MessageHelper;
 import br.com.akj.digital.wallet.integration.authorizer.dto.AuthorizerStatus;
+import br.com.akj.digital.wallet.message.producer.NotificationProducer;
 import br.com.akj.digital.wallet.repository.TransactionRepository;
 import br.com.akj.digital.wallet.service.notification.NotificationService;
 import br.com.akj.digital.wallet.service.user.UserService;
@@ -33,7 +34,7 @@ public class TransactionService {
     private final UserService userService;
     private final TransactionValidator transactionValidator;
     private final AuthorizerService authorizerService;
-    private final NotificationService notificationService;
+    private final NotificationProducer notificationProducer;
     private final MessageHelper messageHelper;
 
     @Transactional
@@ -66,7 +67,7 @@ public class TransactionService {
 
         transactionRepository.save(transaction);
 
-        notificationService.send(sender.getId(), receiver.getId(), amount);
+        notificationProducer.send(null);
 
         return new TransactionResponse(transaction.getStatus());
     }

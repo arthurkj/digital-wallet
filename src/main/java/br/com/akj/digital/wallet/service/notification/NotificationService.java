@@ -22,7 +22,7 @@ public class NotificationService {
     private final MessageHelper messageHelper;
 
     public void send(final Long senderId, final Long receiverId, final BigDecimal amount) {
-        log.info("Sending notification to {} for a transaction of {} from {}", senderId, amount, receiverId);
+        log.info("Sending notification to {} for a transaction of {} from {}", receiverId, amount, senderId);
 
         try {
             final NotificationResponse response = notificationIntegration.send();
