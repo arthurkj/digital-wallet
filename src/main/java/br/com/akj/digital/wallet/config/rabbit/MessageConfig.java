@@ -52,7 +52,7 @@ public class MessageConfig {
     Queue sendNotificationQueue() {
         return QueueBuilder.durable(notificationQueueName)
             .withArgument(X_DEAD_LETTER_EXCHANGE, exchange().getName())
-            .withArgument(X_DEAD_LETTER_ROUTING_KEY, notificationQueueRouteKey)
+            .withArgument(X_DEAD_LETTER_ROUTING_KEY, notificationDlqRouteKey)
             .build();
     }
 

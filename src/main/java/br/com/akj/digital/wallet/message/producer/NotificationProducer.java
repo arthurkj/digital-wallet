@@ -22,6 +22,8 @@ public class NotificationProducer {
     private final RabbitTemplate rabbitTemplate;
 
     public void send(final TransactionNotificationMessage transactionNotificationMessage) {
+        log.info("Send message to notify a transaction between {} and {}", transactionNotificationMessage.senderId(), transactionNotificationMessage.receiverId());
+
         rabbitTemplate.convertAndSend(exchange, routeKey, transactionNotificationMessage);
     }
 }

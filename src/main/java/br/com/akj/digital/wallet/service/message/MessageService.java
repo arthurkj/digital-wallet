@@ -26,12 +26,12 @@ public class MessageService {
     private String exchange;
 
     public void process(final Message message, final Procedure procedure, final int maxNumberOfRetries,
-        final String route) {
+        final String plqRoute) {
 
         final int numberOfRetries = getNumberOfRetries(message);
 
         if (numberOfRetries >= maxNumberOfRetries) {
-            sendToParkingLot(message, route);
+            sendToParkingLot(message, plqRoute);
         } else {
             procedure.run();
         }

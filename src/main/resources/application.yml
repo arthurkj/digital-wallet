@@ -13,7 +13,7 @@ spring:
     port: 5672
     username: guest
     password: guest
-
+    listener.simple.default-requeue-rejected: false
 logging:
   level:
     br.com.akj: DEBUG
@@ -52,7 +52,7 @@ message:
         ttl: 5000
         route: rk::send_notification::dlq
         name: digital_wallet::send_notification::dlq
-        retries: 5
+        retries: 3
       plq:
         route: rk::send_notification::plq
         name: digital_wallet::send_notification::plq
