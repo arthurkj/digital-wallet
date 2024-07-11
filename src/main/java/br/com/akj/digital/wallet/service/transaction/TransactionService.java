@@ -5,6 +5,7 @@ import static br.com.akj.digital.wallet.integration.authorizer.dto.AuthorizerSta
 
 import java.math.BigDecimal;
 
+import br.com.akj.digital.wallet.builder.notification.TransactionMessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,7 +68,7 @@ public class TransactionService {
 
         transactionRepository.save(transaction);
 
-        notificationProducer.send(null);
+        notificationProducer.send(TransactionMessageBuilder.build(request.sender(), request.receiver(), request.amount()));
 
         return new TransactionResponse(transaction.getStatus());
     }

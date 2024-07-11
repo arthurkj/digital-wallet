@@ -8,6 +8,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import br.com.akj.digital.wallet.message.dto.TransactionNotificationMessage;
+import br.com.akj.digital.wallet.message.producer.NotificationProducer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -46,7 +48,7 @@ class TransactionServiceTest {
     private AuthorizerService authorizerService;
 
     @Mock
-    private NotificationService notificationService;
+    private NotificationProducer notificationProducer;
 
     @Mock
     private MessageHelper messageHelper;
@@ -75,7 +77,7 @@ class TransactionServiceTest {
         verify(userService).getById(request.receiver());
         verify(authorizerService).authorize(sender.getId(), request.amount());
         verify(transactionRepository).save(any(TransactionEntity.class));
-        verify(notificationService).send(sender.getId(), receiver.getId(), request.amount());
+        verify(notificationProducer).send(any(TransactionNotificationMessage.class));
     }
 
     @Test
@@ -99,6 +101,6 @@ class TransactionServiceTest {
         verify(userService).getById(request.receiver());
         verify(authorizerService).authorize(sender.getId(), request.amount());
         verify(transactionRepository).save(any(TransactionEntity.class));
-        verifyNoInteractions(notificationService);
+        verifyNoInteractions(notificationProducer);
     }
 }
