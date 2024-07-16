@@ -1,18 +1,19 @@
 package br.com.akj.digital.wallet.integration.resource;
 
-import static java.lang.Boolean.TRUE;
-import static java.util.Arrays.asList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockserver.integration.ClientAndServer.startClientAndServer;
-import static org.mockserver.matchers.Times.exactly;
-import static org.mockserver.model.HttpRequest.request;
-import static org.mockserver.model.HttpResponse.response;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
-import java.math.BigDecimal;
-
+import br.com.akj.digital.wallet.domain.UserEntity;
+import br.com.akj.digital.wallet.domain.enumeration.TransactionStatus;
+import br.com.akj.digital.wallet.domain.enumeration.UserType;
+import br.com.akj.digital.wallet.dto.transaction.TransactionRequest;
+import br.com.akj.digital.wallet.dto.transaction.TransactionResponse;
+import br.com.akj.digital.wallet.errors.dto.ErrorDTO;
+import br.com.akj.digital.wallet.integration.BaseIntegrationTest;
+import br.com.akj.digital.wallet.integration.authorizer.dto.AuthorizerStatus;
+import br.com.akj.digital.wallet.integration.authorizer.dto.TransactionAuthorizationResponse;
+import br.com.akj.digital.wallet.integration.notification.dto.NotificationResponse;
+import br.com.akj.digital.wallet.repository.UserRepository;
+import br.com.caelum.stella.validation.CPFValidator;
+import com.google.gson.Gson;
+import feign.Request.HttpMethod;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,21 +27,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.google.gson.Gson;
+import java.math.BigDecimal;
 
-import br.com.akj.digital.wallet.domain.UserEntity;
-import br.com.akj.digital.wallet.domain.enumeration.TransactionStatus;
-import br.com.akj.digital.wallet.domain.enumeration.UserType;
-import br.com.akj.digital.wallet.dto.transaction.TransactionRequest;
-import br.com.akj.digital.wallet.dto.transaction.TransactionResponse;
-import br.com.akj.digital.wallet.errors.dto.ErrorDTO;
-import br.com.akj.digital.wallet.integration.BaseIntegrationTest;
-import br.com.akj.digital.wallet.integration.authorizer.dto.AuthorizerStatus;
-import br.com.akj.digital.wallet.integration.authorizer.dto.TransactionAuthorizationResponse;
-import br.com.akj.digital.wallet.integration.notification.dto.NotificationResponse;
-import br.com.akj.digital.wallet.repository.UserRepository;
-import br.com.caelum.stella.validation.CPFValidator;
-import feign.Request.HttpMethod;
+import static java.lang.Boolean.TRUE;
+import static java.util.Arrays.asList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockserver.integration.ClientAndServer.startClientAndServer;
+import static org.mockserver.matchers.Times.exactly;
+import static org.mockserver.model.HttpRequest.request;
+import static org.mockserver.model.HttpResponse.response;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 public class TransactionControllerIT extends BaseIntegrationTest {
 
@@ -58,83 +56,56 @@ public class TransactionControllerIT extends BaseIntegrationTest {
     @Value("${integration.api.authorizer.v3.basePath}${integration.api.authorizer.v3.authorize}")
     String authorizerPath;
 
-    static ClientAndServer notificationMockServer;
-
-    @Value("${integration.api.notification.v3.basePath}${integration.api.notification.v3.send}")
-    String notificationPath;
-
     @BeforeAll
     public static void startServer(@Value("${integration.api.authorizer.host}") final String authorizerHost,
-        @Value("${integration.api.notification.host}") final String notificationHost) {
+                                   @Value("${integration.api.notification.host}") final String notificationHost) {
         authorizerMockServer = startClientAndServer(Integer.valueOf(authorizerHost.split(":")[2]));
-        notificationMockServer = startClientAndServer(Integer.valueOf(notificationHost.split(":")[2]));
     }
 
     @AfterAll
     public static void stopServer() {
         authorizerMockServer.stop();
-        notificationMockServer.stop();
     }
 
     private void createMockForAuthorizerWithAuthorization() {
         final TransactionAuthorizationResponse response = new TransactionAuthorizationResponse(
-            AuthorizerStatus.AUTHORIZED.getValue());
+                AuthorizerStatus.AUTHORIZED.getValue());
 
         authorizerMockServer
-            .when(
-                request()
-                    .withMethod(HttpMethod.GET.toString())
-                    .withPath(authorizerPath)
-                    .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE),
-                exactly(1))
-            .respond(
-                response()
-                    .withStatusCode(HttpStatus.OK.value())
-                    .withHeaders(
-                        new Header(CONTENT_TYPE, APPLICATION_JSON_VALUE))
-                    .withBody(new Gson().toJson(response))
-            );
+                .when(
+                        request()
+                                .withMethod(HttpMethod.GET.toString())
+                                .withPath(authorizerPath)
+                                .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE),
+                        exactly(1))
+                .respond(
+                        response()
+                                .withStatusCode(HttpStatus.OK.value())
+                                .withHeaders(
+                                        new Header(CONTENT_TYPE, APPLICATION_JSON_VALUE))
+                                .withBody(new Gson().toJson(response))
+                );
     }
 
     private void createMockForAuthorizerWithUnauthorization() {
         final TransactionAuthorizationResponse response = new TransactionAuthorizationResponse(
-            AuthorizerStatus.UNAUTHORIZED.getValue());
+                AuthorizerStatus.UNAUTHORIZED.getValue());
 
         authorizerMockServer
-            .when(
-                request()
-                    .withMethod(HttpMethod.GET.toString())
-                    .withPath(authorizerPath)
-                    .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE),
-                exactly(1))
-            .respond(
-                response()
-                    .withStatusCode(HttpStatus.OK.value())
-                    .withHeaders(
-                        new Header(CONTENT_TYPE, APPLICATION_JSON_VALUE))
-                    .withBody(new Gson().toJson(response))
-            );
+                .when(
+                        request()
+                                .withMethod(HttpMethod.GET.toString())
+                                .withPath(authorizerPath)
+                                .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE),
+                        exactly(1))
+                .respond(
+                        response()
+                                .withStatusCode(HttpStatus.OK.value())
+                                .withHeaders(
+                                        new Header(CONTENT_TYPE, APPLICATION_JSON_VALUE))
+                                .withBody(new Gson().toJson(response))
+                );
     }
-
-    private void createMockForNotification() {
-        final NotificationResponse response = new NotificationResponse(TRUE);
-
-        notificationMockServer
-            .when(
-                request()
-                    .withMethod(HttpMethod.GET.toString())
-                    .withPath(notificationPath)
-                    .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE),
-                exactly(1))
-            .respond(
-                response()
-                    .withStatusCode(HttpStatus.OK.value())
-                    .withHeaders(
-                        new Header(CONTENT_TYPE, APPLICATION_JSON_VALUE))
-                    .withBody(new Gson().toJson(response))
-            );
-    }
-
 
     @Test
     public void makeTransaction_error_not_autorizated() {
@@ -143,24 +114,24 @@ public class TransactionControllerIT extends BaseIntegrationTest {
         final BigDecimal senderInitialBalance = BigDecimal.TEN;
 
         final UserEntity sender = UserEntity.builder()
-            .name(RandomStringUtils.random(10))
-            .personRegistrationCode(cpfValidator.generateRandomValid())
-            .email(RandomStringUtils.random(15))
-            .password(RandomStringUtils.randomNumeric(6))
-            .type(UserType.COMMON)
-            .balance(BigDecimal.TEN)
-            .build();
+                .name(RandomStringUtils.random(10))
+                .personRegistrationCode(cpfValidator.generateRandomValid())
+                .email(RandomStringUtils.random(15))
+                .password(RandomStringUtils.randomNumeric(6))
+                .type(UserType.COMMON)
+                .balance(BigDecimal.TEN)
+                .build();
 
         final BigDecimal receiverInitialBalance = BigDecimal.ZERO;
 
         final UserEntity receiver = UserEntity.builder()
-            .name(RandomStringUtils.random(10))
-            .personRegistrationCode(cpfValidator.generateRandomValid())
-            .email(RandomStringUtils.random(15))
-            .password(RandomStringUtils.randomNumeric(6))
-            .type(UserType.COMMON)
-            .balance(receiverInitialBalance)
-            .build();
+                .name(RandomStringUtils.random(10))
+                .personRegistrationCode(cpfValidator.generateRandomValid())
+                .email(RandomStringUtils.random(15))
+                .password(RandomStringUtils.randomNumeric(6))
+                .type(UserType.COMMON)
+                .balance(receiverInitialBalance)
+                .build();
 
         userRepository.saveAll(asList(sender, receiver));
 
@@ -169,10 +140,10 @@ public class TransactionControllerIT extends BaseIntegrationTest {
         final TransactionRequest request = new TransactionRequest(receiver.getId(), sender.getId(), amount);
 
         final UriComponentsBuilder uriBuilder = UriComponentsBuilder
-            .fromUriString("/v1/transaction");
+                .fromUriString("/v1/transaction");
 
         final ResponseEntity<ErrorDTO> result = restTemplate.postForEntity(uriBuilder.toUriString(), request,
-            ErrorDTO.class);
+                ErrorDTO.class);
 
         assertNotNull(result);
         assertEquals(HttpStatus.NOT_ACCEPTABLE, result.getStatusCode());
@@ -187,29 +158,28 @@ public class TransactionControllerIT extends BaseIntegrationTest {
     @Test
     public void makeTransaction() {
         createMockForAuthorizerWithAuthorization();
-        createMockForNotification();
 
         final BigDecimal senderInitialBalance = BigDecimal.TEN;
 
         final UserEntity sender = UserEntity.builder()
-            .name(RandomStringUtils.random(10))
-            .personRegistrationCode(cpfValidator.generateRandomValid())
-            .email(RandomStringUtils.random(15))
-            .password(RandomStringUtils.randomNumeric(6))
-            .type(UserType.COMMON)
-            .balance(senderInitialBalance)
-            .build();
+                .name(RandomStringUtils.random(10))
+                .personRegistrationCode(cpfValidator.generateRandomValid())
+                .email(RandomStringUtils.random(15))
+                .password(RandomStringUtils.randomNumeric(6))
+                .type(UserType.COMMON)
+                .balance(senderInitialBalance)
+                .build();
 
         final BigDecimal receiverInitialBalance = BigDecimal.ZERO;
 
         final UserEntity receiver = UserEntity.builder()
-            .name(RandomStringUtils.random(10))
-            .personRegistrationCode(cpfValidator.generateRandomValid())
-            .email(RandomStringUtils.random(15))
-            .password(RandomStringUtils.randomNumeric(6))
-            .type(UserType.COMMON)
-            .balance(receiverInitialBalance)
-            .build();
+                .name(RandomStringUtils.random(10))
+                .personRegistrationCode(cpfValidator.generateRandomValid())
+                .email(RandomStringUtils.random(15))
+                .password(RandomStringUtils.randomNumeric(6))
+                .type(UserType.COMMON)
+                .balance(receiverInitialBalance)
+                .build();
 
         userRepository.saveAll(asList(sender, receiver));
 
@@ -218,10 +188,10 @@ public class TransactionControllerIT extends BaseIntegrationTest {
         final TransactionRequest request = new TransactionRequest(receiver.getId(), sender.getId(), amount);
 
         final UriComponentsBuilder uriBuilder = UriComponentsBuilder
-            .fromUriString("/v1/transaction");
+                .fromUriString("/v1/transaction");
 
         final ResponseEntity<TransactionResponse> result = restTemplate.postForEntity(uriBuilder.toUriString(), request,
-            TransactionResponse.class);
+                TransactionResponse.class);
 
         assertNotNull(result);
         assertEquals(HttpStatus.OK, result.getStatusCode());
