@@ -14,3 +14,10 @@ integration:
 testcontainers:
   reuse:
     enable: true
+
+message:
+  notification:
+    queue:
+      dlq:
+        ttl: 100
+        retries: 1

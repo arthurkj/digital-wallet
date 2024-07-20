@@ -7,7 +7,13 @@ spring:
     password: password
   jpa:
     show-sql: true
-
+  ### RABBIT ###
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    listener.simple.default-requeue-rejected: false
 logging:
   level:
     br.com.akj: DEBUG
@@ -36,3 +42,17 @@ integration:
         basePath: /v3
         send: /54dc2cf1-3add-45b5-b5a9-6bf7e7f1f4a6
 
+message:
+  exchange: digital_wallet::tx
+  notification:
+    queue:
+      route: rk::send_notification
+      name: digital_wallet::send_notification::q
+      dlq:
+        ttl: 5000
+        route: rk::send_notification::dlq
+        name: digital_wallet::send_notification::dlq
+        retries: 3
+      plq:
+        route: rk::send_notification::plq
+        name: digital_wallet::send_notification::plq
