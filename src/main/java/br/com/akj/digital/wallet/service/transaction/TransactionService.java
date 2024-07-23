@@ -1,6 +1,14 @@
 package br.com.akj.digital.wallet.service.transaction;
 
 import br.com.akj.digital.wallet.builder.notification.TransactionMessageBuilder;
+import static br.com.akj.digital.wallet.errors.Error.UNAUTHORIZED_TRANSACTION;
+import static br.com.akj.digital.wallet.integration.authorizer.dto.AuthorizerStatus.UNAUTHORIZED;
+
+import java.math.BigDecimal;
+
+import br.com.akj.digital.wallet.builder.notification.TransactionMessageBuilder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import br.com.akj.digital.wallet.builder.transaction.TransactionBuilder;
 import br.com.akj.digital.wallet.domain.TransactionEntity;
 import br.com.akj.digital.wallet.domain.UserEntity;
@@ -9,6 +17,7 @@ import br.com.akj.digital.wallet.dto.transaction.TransactionRequest;
 import br.com.akj.digital.wallet.dto.transaction.TransactionResponse;
 import br.com.akj.digital.wallet.exception.BusinessErrorException;
 import br.com.akj.digital.wallet.helper.MessageHelper;
+import br.com.akj.digital.wallet.integration.authorizer.dto.AuthorizerStatus;
 import br.com.akj.digital.wallet.message.producer.NotificationProducer;
 import br.com.akj.digital.wallet.repository.TransactionRepository;
 import br.com.akj.digital.wallet.service.user.UserService;
