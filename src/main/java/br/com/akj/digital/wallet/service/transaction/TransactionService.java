@@ -15,6 +15,7 @@ import br.com.akj.digital.wallet.service.user.UserService;
 import br.com.akj.digital.wallet.validator.transaction.TransactionValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,28 +41,29 @@ public class TransactionService {
                 request.receiver());
 
         final UserEntity sender = userService.getById(request.sender());
-        final BigDecimal amount = request.amount();
 
-        transactionValidator.validate(sender, request.receiver(), amount);
+        transactionValidator.validate(sender, request.receiver(), request.amount());
 
         final UserEntity receiver = userService.getById(request.receiver());
 
-        return initialize(request, sender, receiver, amount);
-    }
-
-    private TransactionResponse initialize(TransactionRequest request, UserEntity sender, UserEntity receiver, BigDecimal amount) {
         final TransactionEntity transaction = TransactionBuilder.build(request, sender, receiver);
 
+        return initialize(transaction);
+    }
+
+    private TransactionResponse initialize(final TransactionEntity transaction) {
         authorize(transaction);
+        calculate(transaction);
 
-        complete(sender, amount, receiver, transaction);
+        save(transaction, TransactionStatus.DONE);
+        log.info("Transaction between {} and {} are completed", transaction.getSender().getId(), transaction.getReceiver().getId());
 
-        notificationProducer.send(TransactionMessageBuilder.build(sender.getId(), receiver.getId(), amount));
+        notificationProducer.send(TransactionMessageBuilder.build(transaction.getSender().getId(), transaction.getReceiver().getId(), transaction.getAmount()));
 
         return new TransactionResponse(transaction.getStatus());
     }
 
-    private void authorize(TransactionEntity transaction) {
+    private void authorize(final TransactionEntity transaction) {
         final Boolean isAuthorized = authorizerService.authorize(transaction.getSender().getId(), transaction.getAmount());
 
         if (!isAuthorized) {
@@ -69,23 +71,25 @@ public class TransactionService {
         }
     }
 
-    private void saveUnauthorized(TransactionEntity transaction) {
+    private void saveUnauthorized(final TransactionEntity transaction) {
         log.info("Transaction between {} and {} was unauthorized", transaction.getSender().getId(), transaction.getReceiver().getId());
         save(transaction, TransactionStatus.ERROR);
 
         throw new BusinessErrorException(UNAUTHORIZED_TRANSACTION, messageHelper.get(UNAUTHORIZED_TRANSACTION));
     }
 
-    private void complete(UserEntity sender, BigDecimal amount, UserEntity receiver, TransactionEntity transaction) {
-        sender.setBalance(sender.getBalance().subtract(amount));
-        receiver.setBalance(receiver.getBalance().add(amount));
+    private void calculate(final TransactionEntity transaction) {
+        final UserEntity sender = transaction.getSender();
+        final BigDecimal amount = transaction.getAmount();
 
-        save(transaction, TransactionStatus.DONE);
+        transaction.getSender().setBalance(sender.getBalance().subtract(amount));
+
+        final UserEntity receiver = transaction.getReceiver();
+        receiver.setBalance(receiver.getBalance().add(amount));
     }
 
-    private void save(TransactionEntity transaction, TransactionStatus error) {
-        transaction.setStatus(error);
+    private void save(final TransactionEntity transaction, final TransactionStatus status) {
+        transaction.setStatus(status);
         transactionRepository.save(transaction);
     }
-
 }

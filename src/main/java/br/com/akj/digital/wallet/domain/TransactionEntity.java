@@ -48,5 +48,4 @@ public class TransactionEntity {
 
     @CreationTimestamp
     private OffsetDateTime date;
-
 }
