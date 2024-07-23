@@ -1,7 +1,6 @@
 package br.com.akj.digital.wallet.service.transaction;
 
 import static br.com.akj.digital.wallet.domain.enumeration.TransactionStatus.DONE;
-import static br.com.akj.digital.wallet.domain.enumeration.TransactionStatus.ERROR;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -25,7 +24,6 @@ import br.com.akj.digital.wallet.fixture.Fixture;
 import br.com.akj.digital.wallet.helper.MessageHelper;
 import br.com.akj.digital.wallet.integration.authorizer.dto.AuthorizerStatus;
 import br.com.akj.digital.wallet.repository.TransactionRepository;
-import br.com.akj.digital.wallet.service.notification.NotificationService;
 import br.com.akj.digital.wallet.service.user.UserService;
 import br.com.akj.digital.wallet.validator.transaction.TransactionValidator;
 
@@ -54,20 +52,18 @@ class TransactionServiceTest {
     private MessageHelper messageHelper;
 
     @Test
-    public void execute_with_success() {
+    public void make_with_success() {
         final TransactionRequest request = Fixture.make(TransactionRequest.class);
 
         final UserEntity sender = Fixture.make(UserEntity.class);
         final UserEntity receiver = Fixture.make(UserEntity.class);
 
-        final AuthorizerStatus authorizationStatus = AuthorizerStatus.AUTHORIZED;
-
         when(userService.getById(request.sender())).thenReturn(sender);
         when(userService.getById(request.receiver())).thenReturn(receiver);
 
-        when(authorizerService.authorize(sender.getId(), request.amount())).thenReturn(authorizationStatus);
+        when(authorizerService.authorize(sender.getId(), request.amount())).thenReturn(true);
 
-        final TransactionResponse result = service.execute(request);
+        final TransactionResponse result = service.make(request);
 
         assertNotNull(result);
         assertEquals(DONE, result.status());
@@ -81,20 +77,18 @@ class TransactionServiceTest {
     }
 
     @Test
-    public void execute_unauthorized_transaction() {
+    public void make_unauthorized_transaction() {
         final TransactionRequest request = Fixture.make(TransactionRequest.class);
 
         final UserEntity sender = Fixture.make(UserEntity.class);
         final UserEntity receiver = Fixture.make(UserEntity.class);
 
-        final AuthorizerStatus authorizationStatus = AuthorizerStatus.UNAUTHORIZED;
-
         when(userService.getById(request.sender())).thenReturn(sender);
         when(userService.getById(request.receiver())).thenReturn(receiver);
 
-        when(authorizerService.authorize(sender.getId(), request.amount())).thenReturn(authorizationStatus);
+        when(authorizerService.authorize(sender.getId(), request.amount())).thenReturn(false);
 
-        assertThrows(BusinessErrorException.class, () -> service.execute(request));
+        assertThrows(BusinessErrorException.class, () -> service.make(request));
 
         verify(userService).getById(request.sender());
         verify(transactionValidator).validate(sender, request.receiver(), request.amount());

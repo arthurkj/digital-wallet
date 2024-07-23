@@ -35,7 +35,7 @@ public class TransactionService {
     private final MessageHelper messageHelper;
 
     @Transactional
-    public TransactionResponse execute(final TransactionRequest request) {
+    public TransactionResponse make(final TransactionRequest request) {
         log.info("Making transfer of {} from user {} to user {}", request.amount(), request.sender(),
                 request.receiver());
 
@@ -46,10 +46,10 @@ public class TransactionService {
 
         final UserEntity receiver = userService.getById(request.receiver());
 
-        return make(request, sender, receiver, amount);
+        return initialize(request, sender, receiver, amount);
     }
 
-    private TransactionResponse make(TransactionRequest request, UserEntity sender, UserEntity receiver, BigDecimal amount) {
+    private TransactionResponse initialize(TransactionRequest request, UserEntity sender, UserEntity receiver, BigDecimal amount) {
         final TransactionEntity transaction = TransactionBuilder.build(request, sender, receiver);
 
         authorize(transaction);
