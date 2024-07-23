@@ -1,7 +1,6 @@
 package br.com.akj.digital.wallet.builder.notification;
 
 import br.com.akj.digital.wallet.message.dto.TransactionNotificationMessage;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

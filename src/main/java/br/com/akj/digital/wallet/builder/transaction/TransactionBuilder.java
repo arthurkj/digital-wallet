@@ -8,9 +8,8 @@ import br.com.akj.digital.wallet.dto.transaction.TransactionRequest;
 public class TransactionBuilder {
 
     public static TransactionEntity build(final TransactionRequest request, final UserEntity sender,
-        final UserEntity receiver, final TransactionStatus status) {
+        final UserEntity receiver) {
         return TransactionEntity.builder()
-            .status(status)
             .sender(sender)
             .receiver(receiver)
             .amount(request.amount())

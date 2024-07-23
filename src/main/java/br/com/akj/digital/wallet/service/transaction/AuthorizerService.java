@@ -17,13 +17,13 @@ public class AuthorizerService {
 
     private final AuthorizerIntegration authorizerIntegration;
 
-    public AuthorizerStatus authorize(final Long senderId, final BigDecimal amount) {
+    public Boolean authorize(final Long senderId, final BigDecimal amount) {
         log.info("Requesting authorization for transaction of {} from {}.", amount, senderId);
 
         final TransactionAuthorizationResponse response = authorizerIntegration.authorizeTransaction();
 
         log.info("Result of requesting from {}: {}", senderId, response.message());
 
-        return AuthorizerStatus.fromValue(response.message());
+        return AuthorizerStatus.AUTHORIZED.equals(AuthorizerStatus.fromValue(response.message()));
     }
 }
