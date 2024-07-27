@@ -26,12 +26,12 @@ public class TransactionValidator {
             throw new BusinessErrorException(ACTION_NOT_PERMITTED, messageHelper.get(ACTION_NOT_PERMITTED));
         }
 
-        if (hasNotEnoughBalance(sender, amount)) {
+        if (hasInsufficientBalance(sender, amount)) {
             throw new BusinessErrorException(INSUFFICIENT_BALANCE, messageHelper.get(INSUFFICIENT_BALANCE));
         }
     }
 
-    private boolean hasNotEnoughBalance(UserEntity sender, BigDecimal amount) {
+    private boolean hasInsufficientBalance(UserEntity sender, BigDecimal amount) {
         return sender.getBalance().compareTo(amount) < 0;
     }
 
