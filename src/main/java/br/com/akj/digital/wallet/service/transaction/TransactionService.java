@@ -50,7 +50,7 @@ public class TransactionService {
         final boolean isAuthorized = authorizerTransactionService.authorize(sender, amount);
 
         if (!isAuthorized) {
-            saveTransaction(sender, receiver, amount, TransactionStatus.ERROR);
+            saveTransactionWithStatus(sender, receiver, amount, TransactionStatus.ERROR);
             throw new BusinessErrorException(UNAUTHORIZED_TRANSACTION, messageHelper.get(UNAUTHORIZED_TRANSACTION));
         }
 
@@ -61,14 +61,14 @@ public class TransactionService {
         sender.decreaseBalance(amount);
         receiver.increaseBalance(amount);
 
-        final TransactionEntity transaction = saveTransaction(sender, receiver, amount, TransactionStatus.DONE);
+        final TransactionEntity transaction = saveTransactionWithStatus(sender, receiver, amount, TransactionStatus.DONE);
 
         notificationProducer.send(TransactionMessageBuilder.build(transaction));
 
         return new TransactionResponse(transaction.getStatus());
     }
 
-    private TransactionEntity saveTransaction(final UserEntity sender, final UserEntity receiver, final BigDecimal amount, final TransactionStatus status) {
+    private TransactionEntity saveTransactionWithStatus(final UserEntity sender, final UserEntity receiver, final BigDecimal amount, final TransactionStatus status) {
         final TransactionEntity transaction = TransactionBuilder.build(sender, receiver, amount, status);
         return transactionRepository.save(transaction);
     }
