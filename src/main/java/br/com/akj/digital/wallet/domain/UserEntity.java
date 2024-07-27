@@ -49,4 +49,20 @@ public class UserEntity {
 
     @Column
     private BigDecimal balance;
+
+    public void increaseBalance(final BigDecimal amount) {
+        if (this.balance == null) {
+            this.balance = BigDecimal.ZERO;
+        }
+
+        this.balance = balance.add(amount);
+    }
+
+    public void decreaseBalance(final BigDecimal amount) {
+        if (this.balance == null) {
+            this.balance = BigDecimal.ZERO;
+        }
+
+        this.balance = balance.subtract(amount);
+    }
 }

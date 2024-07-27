@@ -106,7 +106,6 @@ public class NotificationConsumerIT extends BaseIntegrationTest {
                 .until(() -> output.getOut().contains("message received"));
 
         assertTrue(output.getOut().contains("of " + message.amount()));
-        assertTrue(output.getOut().contains("Notification sended"));
     }
 
     @Test

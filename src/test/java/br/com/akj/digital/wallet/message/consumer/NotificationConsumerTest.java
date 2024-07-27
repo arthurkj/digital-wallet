@@ -3,7 +3,7 @@ package br.com.akj.digital.wallet.message.consumer;
 import br.com.akj.digital.wallet.fixture.Fixture;
 import br.com.akj.digital.wallet.message.dto.TransactionNotificationMessage;
 import br.com.akj.digital.wallet.service.message.MessageService;
-import br.com.akj.digital.wallet.service.notification.NotificationService;
+import br.com.akj.digital.wallet.service.notification.TransactionNotificationService;
 import br.com.akj.digital.wallet.utils.Procedure;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ class NotificationConsumerTest {
     private MessageService messageService;
 
     @Mock
-    private NotificationService notificationService;
+    private TransactionNotificationService transactionNotificationService;
 
     @BeforeEach
     public void setUp() {
@@ -47,6 +47,6 @@ class NotificationConsumerTest {
 
         Procedure capturedProcedure = procedureCaptor.getValue();
         capturedProcedure.run();
-        verify(notificationService).send(transactionNotificationMessage.senderId(), transactionNotificationMessage.receiverId(), transactionNotificationMessage.amount());
+        verify(transactionNotificationService).send(transactionNotificationMessage.senderId(), transactionNotificationMessage.receiverId(), transactionNotificationMessage.amount());
     }
 }
