@@ -1,29 +1,30 @@
 package br.com.akj.digital.wallet.service.transaction;
 
-import java.math.BigDecimal;
-
-import org.springframework.stereotype.Service;
-
+import br.com.akj.digital.wallet.domain.UserEntity;
 import br.com.akj.digital.wallet.integration.authorizer.AuthorizerIntegration;
 import br.com.akj.digital.wallet.integration.authorizer.dto.AuthorizerStatus;
 import br.com.akj.digital.wallet.integration.authorizer.dto.TransactionAuthorizationResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class AuthorizerService {
+public class AuthorizerTransactionService {
 
     private final AuthorizerIntegration authorizerIntegration;
 
-    public AuthorizerStatus authorize(final Long senderId, final BigDecimal amount) {
-        log.info("Requesting authorization for transaction of {} from {}.", amount, senderId);
+    public boolean authorize(final UserEntity sender, final BigDecimal amount) {
+        log.info("Requesting authorization for transaction of {} from {}.", amount, sender);
 
         final TransactionAuthorizationResponse response = authorizerIntegration.authorizeTransaction();
 
-        log.info("Result of requesting from {}: {}", senderId, response.message());
+        final AuthorizerStatus status = AuthorizerStatus.fromValue(response.message());
+        log.info("Transaction of {} was {}", sender, status.getValue());
 
-        return AuthorizerStatus.fromValue(response.message());
+        return AuthorizerStatus.AUTHORIZED.equals(status);
     }
 }

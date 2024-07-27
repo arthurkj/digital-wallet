@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import br.com.akj.digital.wallet.message.dto.TransactionNotificationMessage;
 import br.com.akj.digital.wallet.service.message.MessageService;
-import br.com.akj.digital.wallet.service.notification.NotificationService;
+import br.com.akj.digital.wallet.service.notification.TransactionNotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 public class NotificationConsumer {
 
     private final MessageService messageService;
-    private final NotificationService notificationService;
+    private final TransactionNotificationService transactionNotificationService;
 
     @Value("${message.notification.queue.dlq.retries}")
     private int transactionNotificationMaxRetries;
@@ -31,7 +31,7 @@ public class NotificationConsumer {
         final Message message) {
         log.info("Transaction notification message received: {}", transactionNotificationMessage);
 
-        messageService.process(message, () -> notificationService.send(transactionNotificationMessage.senderId(),
+        messageService.process(message, () -> transactionNotificationService.send(transactionNotificationMessage.senderId(),
                 transactionNotificationMessage.receiverId(), transactionNotificationMessage.amount()),
             transactionNotificationMaxRetries, transactionNotificationPlqRoute);
     }

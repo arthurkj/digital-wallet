@@ -16,22 +16,28 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class NotificationService {
+public class TransactionNotificationService {
 
     private final NotificationIntegration notificationIntegration;
     private final MessageHelper messageHelper;
 
     public void send(final Long senderId, final Long receiverId, final BigDecimal amount) {
-        log.info("Sending notification to {} for a transaction of {} from {}", receiverId, amount, senderId);
-
         try {
-            final NotificationResponse response = notificationIntegration.send();
-            log.info("Notification sended: {}", response.message());
+            sendTransactionNotification(senderId, receiverId, amount);
         } catch (final Exception e) {
-            log.error("Error when try to notify a transaction between {} and {}: {}", senderId, receiverId,
-                e.getMessage());
-            throw new InternalErrorException(ERROR_ON_TRANSACTION_NOTIFICATION,
-                messageHelper.get(ERROR_ON_TRANSACTION_NOTIFICATION));
+            handleNotificationError(senderId, receiverId, e);
         }
+    }
+
+    private void sendTransactionNotification(Long senderId, Long receiverId, BigDecimal amount) {
+        log.info("Sending notification to {} for a transaction of {} from {}", receiverId, amount, senderId);
+        notificationIntegration.send();
+    }
+
+    private void handleNotificationError(Long senderId, Long receiverId, Exception e) {
+        log.error("Error when try to notify a transaction between {} and {}: {}", senderId, receiverId,
+                e.getMessage());
+        throw new InternalErrorException(ERROR_ON_TRANSACTION_NOTIFICATION,
+                messageHelper.get(ERROR_ON_TRANSACTION_NOTIFICATION));
     }
 }
