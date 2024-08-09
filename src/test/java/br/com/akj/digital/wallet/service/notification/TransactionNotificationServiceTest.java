@@ -20,10 +20,10 @@ import br.com.akj.digital.wallet.integration.notification.NotificationIntegratio
 import br.com.akj.digital.wallet.integration.notification.dto.NotificationResponse;
 
 @ExtendWith(MockitoExtension.class)
-class NotificationServiceTest {
+class TransactionNotificationServiceTest {
 
     @InjectMocks
-    private NotificationService service;
+    private TransactionNotificationService service;
 
     @Mock
     private NotificationIntegration notificationIntegration;

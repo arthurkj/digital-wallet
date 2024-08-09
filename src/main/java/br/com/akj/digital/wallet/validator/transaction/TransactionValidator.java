@@ -22,16 +22,24 @@ public class TransactionValidator {
     private final MessageHelper messageHelper;
 
     public void validate(final UserEntity sender, final Long receiverId, final BigDecimal amount) {
-        if (sender.getId().equals(receiverId)) {
+        if (isSenderEqualsToReceiver(sender, receiverId) || isSenderOfTypeStoreOwner(sender)) {
             throw new BusinessErrorException(ACTION_NOT_PERMITTED, messageHelper.get(ACTION_NOT_PERMITTED));
         }
 
-        if (UserType.STORE_OWNER.equals(sender.getType())) {
-            throw new BusinessErrorException(ACTION_NOT_PERMITTED, messageHelper.get(ACTION_NOT_PERMITTED));
-        }
-
-        if (sender.getBalance().compareTo(amount) < 0) {
+        if (hasInsufficientBalance(sender, amount)) {
             throw new BusinessErrorException(INSUFFICIENT_BALANCE, messageHelper.get(INSUFFICIENT_BALANCE));
         }
+    }
+
+    private boolean hasInsufficientBalance(UserEntity sender, BigDecimal amount) {
+        return sender.getBalance().compareTo(amount) < 0;
+    }
+
+    private boolean isSenderOfTypeStoreOwner(UserEntity sender) {
+        return UserType.STORE_OWNER.equals(sender.getType());
+    }
+
+    private boolean isSenderEqualsToReceiver(UserEntity sender, Long receiverId) {
+        return sender.getId().equals(receiverId);
     }
 }
