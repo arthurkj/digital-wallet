@@ -41,23 +41,26 @@ public class TransactionService {
             request.receiver());
 
         final UserEntity sender = userService.getById(request.sender());
-        final BigDecimal amount = request.amount();
 
-        transactionValidator.validate(sender, request.receiver(), amount);
+        transactionValidator.validate(sender, request.receiver(), request.amount());
 
+        return processValidTransaction(request, sender);
+    }
+
+    private TransactionResponse processValidTransaction(final TransactionRequest request, final UserEntity sender) {
         final UserEntity receiver = userService.getById(request.receiver());
 
-        final boolean isAuthorized = authorizerTransactionService.authorize(sender, amount);
+        final boolean isAuthorized = authorizerTransactionService.authorize(sender, request.amount());
 
         if (!isAuthorized) {
-            saveTransactionWithStatus(sender, receiver, amount, TransactionStatus.ERROR);
+            saveTransactionWithStatus(sender, receiver, request.amount(), TransactionStatus.ERROR);
             throw new BusinessErrorException(UNAUTHORIZED_TRANSACTION, messageHelper.get(UNAUTHORIZED_TRANSACTION));
         }
 
-        return processAuthorizedTransaction(sender, amount, receiver);
+        return processAuthorizedTransaction(sender, request.amount(), receiver);
     }
 
-    private TransactionResponse processAuthorizedTransaction(UserEntity sender, BigDecimal amount, UserEntity receiver) {
+    private TransactionResponse processAuthorizedTransaction(final UserEntity sender, final BigDecimal amount, final UserEntity receiver) {
         sender.decreaseBalance(amount);
         receiver.increaseBalance(amount);
 
